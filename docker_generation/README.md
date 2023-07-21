@@ -20,7 +20,10 @@ qemu-system-riscv64 -m 1G -M virt -cpu rv64 \
     -append "console=ttyS0 root=/dev/vda rw" -nographic -snapshot
 ```
 5. Some features of the emulation can be configured, such as the number of CPU cores or size memory of the emulated hardware. To explore this options visit the [QEMU documentation](https://www.qemu.org/docs/master/).
-
 6. To dockenize this emulation we can replicate the same process on top of a Docker container using the Ubuntu Docker image as base:```docker pull ubuntu:latest```
-7. Cloning the Dockerfile and 'installation' folder from this repository, we can build a Docker image with the dependencies needed to generate the QEMU image on top of it.
-8. 
+7. Cloning the Dockerfile and 'installation' folder from this repository, we can build a Docker image with the dependencies needed to execute the QEMU image on top of it.
+8. The Dockerfile will copy the contents of the folder '/isar-riscv', which should contain the QEMU RISC-V image: ```docker build --tag rebecca:isar_riscv_docker --force-rm .```
+9. To run the Docker image and run the QEMU emulator on top of it use this commands:
+    1. ```docker run -t -d --name rebecca_isar rebecca:isar_riscv_docker /bin/bash```
+    2. ```docker exec -i -t rebecca_isar /bin/bash```
+10. This will open a command window from where we can execute the QEMU emulation as if it where installed locally.

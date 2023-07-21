@@ -1,20 +1,9 @@
 #!/bin/bash
 
-target="EDDL"
-
-if [ $# -ge 1 ]
-then
-    target="${1}"
-fi
-
 apt update -y
 apt upgrade -y
 echo "Europe/Madrid" >/etc/timezone
 ln -fs /usr/share/zoneinfo/Europe/Madrid /etc/localtime
-# ENV DEBIAN_FRONTEND=noninteractive
-# RUN echo 'tzdata tzdata/Areas select Europe' | debconf-set-selections
-# RUN echo 'tzdata tzdata/Zones/Europe select Madrid' | debconf-set-selections
-# RUN DEBIAN_FRONTEND="noninteractive" apt install -y tzdata
 apt install -y tzdata 
 dpkg-reconfigure --frontend noninteractive tzdata
 
@@ -35,7 +24,7 @@ fi
 echo "PermitRootLogin yes" >>/etc/ssh/sshd_config
 echo "Port 2022" >>/etc/ssh/sshd_config
 
-apt install -y opensbi u-boot-qemu
+apt install -y opensbi u-boot-qemu qemu-system-riscv64
 
 # Prepare the SSH server daemon in the container
 cp /installation/init.sh /usr/local/bin/
