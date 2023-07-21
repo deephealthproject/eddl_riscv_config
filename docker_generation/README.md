@@ -1,6 +1,6 @@
-# RISC-V emulation and Docker creation
+# 1. Docker creation with ISAR RISC-V emulation
 
-Here are the step-by-step instructions to generate a Docker image capable of running a QEMU RISC-V emulation:
+Here are the step-by-step instructions to generate a Docker image capable of running the QEMU ISAR RISC-V emulation:
 
 1. Install Docker and the QEMU extension needed to work with the RISC-V set of instructions:
     ```sudo apt install docker.io qemu-system-riscv64```
@@ -27,3 +27,26 @@ qemu-system-riscv64 -m 1G -M virt -cpu rv64 \
     1. ```docker run -t -d --name rebecca_isar rebecca:isar_riscv_docker /bin/bash```
     2. ```docker exec -i -t rebecca_isar /bin/bash```
 10. This will open a command window from where we can execute the QEMU emulation as if it where installed locally.
+
+# 2. Docker creation with open source RISC-V
+
+Next are the steps needed to generate a Docker image capable of running the open source RISC-V emulation available in [https://people.debian.org/~gio/dqib/](https://people.debian.org/~gio/dqib/):
+1. Download the RISC-V image: https://gitlab.com/api/v4/projects/giomasce%2Fdqib/jobs/artifacts/master/download?job=convert_riscv64-virt
+2. Extract the contents of the file 'artifacts.zip'
+3. This image is already build and can be executed immediately. The file readme.txt extracted from the zip folder will contain the command needed to execute the emulation:
+```
+    qemu-system-riscv64 -machine virt \
+     -cpu rv64 \
+     -smp 4 \
+     -m 4G \
+     -device virtio-blk-device,drive=hd \
+     -drive file=image.qcow2,if=none,id=hd \
+     -device virtio-net-device,netdev=net \
+     -netdev user,id=net,hostfwd=tcp::2222-:22 \
+     -bios /usr/lib/riscv64-linux-gnu/opensbi/generic/fw_jump.elf \
+     -kernel /usr/lib/u-boot/qemu-riscv64_smode/uboot.elf \
+     -object rng-random,filename=/dev/urandom,id=rng \
+     -device virtio-rng-device,rng=rng \
+     -nographic -append "root=LABEL=rootfs console=ttyS0"
+```
+4. Same as with the set-up for the ISAR image, we can build a Docker image based on Ubuntu and transfer the files use to execute the emulation.
